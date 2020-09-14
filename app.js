@@ -6,8 +6,19 @@ const DOWNLOADS_dir = path.join(__dirname, "/DOWNLOADS");
 fs.readdir(DOWNLOADS_dir, {}, (err, files) => {
   if (err) return console.log(err);
   const artistFolders = files.filter((file) => file !== ".DS_Store");
-  const artistFoldersPaths = artistFolders.map((artistFolder) =>
-    path.join(DOWNLOADS_dir, artistFolder)
+  const artistFoldersAbsolPaths = artistFolders.map((artistName) =>
+    path.join(DOWNLOADS_dir, artistName)
   );
-  console.log(artistFoldersPaths);
+
+  artistFoldersAbsolPaths.forEach((artistFolder) => {
+    fs.readdir(artistFolder, {}, (err, files) => {
+      if (err) return console.log(err);
+      const albumFolders = files.filter((file) =>
+        /\(Album|Single\)$/.test(file)
+      );
+      const albumFoldersAbsolPaths = albumFolders.map((albumName) =>
+        path.join(artistFolder, albumName)
+      );
+    });
+  });
 });
