@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 // HELPERS
 const { getFiles } = require("./helpers.js");
@@ -15,29 +16,17 @@ const DOWNLOADS_DIR = path.join(__dirname, "/DOWNLOADS");
 
     artistsPaths.forEach(async (artistPath) => {
       const albums = await getFiles(artistPath);
-      const albumsPaths = albums.map((album) => path.join(artistPath, album));
+      const albumsPaths = albums
+        .filter((file) => /\(Album|Single\)$/.test(file))
+        .map((album) => path.join(artistPath, album));
+
+      albumsPaths.forEach((albumPath) => {
+        fs.readdir(albumPath, {}, (err, files) => {
+          console.log(files.filter((file) => /\.flac$/.test(file)));
+        });
+      });
     });
   } catch (e) {
     throw new Error(e);
   }
 })();
-
-// artistFoldersPaths.forEach((artistFolder) => {
-//   fs.readdir(artistFolder, {}, (err, files) => {
-//     if (err) return console.log(err);
-
-//     const albumFolders = files.filter((file) => /\(Album|Single\)$/.test(file));
-//     const albumFoldersPaths = albumFolders.map((albumName) =>
-//       path.join(artistFolder, albumName)
-//     );
-
-//     albumFoldersPaths.forEach((albumFolder) => {
-//       fs.readdir(albumFolder, {}, (err, files) => {
-//         if (err) console.log(err);
-
-//         const songs = files.filter((file) => /\.flac$/.test(file));
-//         const songsPaths = songs.map((song) => path.join(albumFolder, song));
-//       });
-//     });
-//   });
-// });
