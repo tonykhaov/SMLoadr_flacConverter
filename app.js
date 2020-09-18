@@ -6,7 +6,7 @@ const { getFiles } = require("./helpers.js");
 
 const DOWNLOADS_DIR = path.join(__dirname, "/DOWNLOADS");
 
-const moveDownloadedSongsToConvertedSongs = async () => {
+const moveDownloadedSongsToAllSongs = async () => {
   const artists = await getFiles(DOWNLOADS_DIR);
 
   const artistsPaths = artists
@@ -25,16 +25,10 @@ const moveDownloadedSongsToConvertedSongs = async () => {
 
         flacSongs.forEach((flacSong) => {
           const flacSongOldPath = path.join(albumPath, flacSong);
-          const flacSongsNewPath = path.join(
-            __dirname,
-            "ConvertedSongs",
-            flacSong
-          );
+          const flacSongsNewPath = path.join(__dirname, "AllSongs", flacSong);
           fs.rename(flacSongOldPath, flacSongsNewPath, (err) => {
             if (err) return console.log(err);
-            console.log(
-              `${flacSong} was succesfully moved to ConvertedSongs folder`
-            );
+            console.log(`${flacSong} was succesfully moved to AllSongs folder`);
           });
         });
       });
@@ -44,7 +38,7 @@ const moveDownloadedSongsToConvertedSongs = async () => {
 
 (() => {
   try {
-    moveDownloadedSongsToConvertedSongs();
+    moveDownloadedSongsToAllSongs();
   } catch (e) {
     throw new Error(e);
   }
